@@ -1,0 +1,5 @@
+include ':app'
+
+include ':common'
+
+include ':rx_mvvm'
