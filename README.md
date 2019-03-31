@@ -6,11 +6,12 @@ A basic framework that integrates MVVM and Redux.
 
 ## 1、引入
 ```groovy
-implementation 'com.github.ITGungnir:RxMVVM:1.0.0'
+implementation "com.github.ITGungnir:RxMVVM:$rxmvvm_version"
 ```
 
 ## 2、使用MVVM
 #### 1）BaseVM的使用
+`BaseVM`是`MVVM`中`VM`层的基类，是`V`层和`M`层的桥梁，提供方法给`V`层调用，方法中调用`M`层加载数据或其他操作；提供给`V`层一个监听器，监听数据变化。
 ```kotlin
 class AppVM1 : BaseVM() {
 
@@ -23,6 +24,7 @@ class AppVM1 : BaseVM() {
 ```
 
 #### 2）BaseActivity的使用
+`BaseActivity`是`V`层中`Activity`的基类，通过`createVM()`方法绑定`VM`，通过`vm?`调用`VM`层的方法或监听数据变化。
 ```kotlin
 class AppActivity1 : BaseActivity<AppVM1>() {
 
@@ -45,31 +47,8 @@ class AppActivity1 : BaseActivity<AppVM1>() {
 }
 ```
 
-#### 3）BaseUI的使用
-```kotlin
-class AppUI2 : BaseUI() {
-
-    private lateinit var uiOwner: AppActivity2
-
-    @SuppressLint("SetTextI18n")
-    override fun createView(ui: AnkoContext<LifecycleOwner>): View = with(ui) {
-        uiOwner = ui.owner as AppActivity2
-        verticalLayout {
-            button {
-                text = "点击弹出随机数Toast"
-            }.lparams(wrapContent, wrapContent).apply {
-                setOnClickListener {
-                    uiOwner.generateRandomNumber()
-                }
-            }
-        }.apply {
-            gravity = Gravity.CENTER
-        }
-    }
-}
-```
-
 #### 3）BaseFragment的使用
+`BaseFragment`是`Fragment`的基类，用法与`BaseActivity`大同小异。
 ```kotlin
 class AppFragment3 : BaseFragment<AppFragVM3>() {
 
@@ -96,6 +75,31 @@ class AppFragment3 : BaseFragment<AppFragVM3>() {
 BaseFragment的VM绑定方法有两种，即`createVM()`和`shareVM()`。前者只是使用自己的VM，而后者则可以与其他Fragment共享同一个VM。
 ```kotlin
 override fun obtainVM(): AppVM4 = shareVM()
+```
+
+#### 4）BaseUI的使用
+`BaseUI`是基于`Kotlin-Anko`的一个`UI`基类，可以使用`Anko`的特性编写界面，摒弃`XML`界面。
+```kotlin
+class AppUI2 : BaseUI() {
+
+    private lateinit var uiOwner: AppActivity2
+
+    @SuppressLint("SetTextI18n")
+    override fun createView(ui: AnkoContext<LifecycleOwner>): View = with(ui) {
+        uiOwner = ui.owner as AppActivity2
+        verticalLayout {
+            button {
+                text = "点击弹出随机数Toast"
+            }.lparams(wrapContent, wrapContent).apply {
+                setOnClickListener {
+                    uiOwner.generateRandomNumber()
+                }
+            }
+        }.apply {
+            gravity = Gravity.CENTER
+        }
+    }
+}
 ```
 
 ## 3、使用Redux
