@@ -1,25 +1,20 @@
 package my.itgungnir.rxmvvm.app3
 
 import my.itgungnir.rxmvvm.R
-import my.itgungnir.rxmvvm.app1.AppVM1
 import my.itgungnir.rxmvvm.core.mvvm.BaseActivity
-import my.itgungnir.rxmvvm.core.mvvm.BaseVM
 
-/**
- * MVVM Activity + Fragment + Anko
- */
-class AppActivity3 : BaseActivity<BaseVM>() {
+class AppActivity3 : BaseActivity() {
 
-    override fun contentView(): Int = R.layout.activity_app3
-
-    override fun obtainVM(): AppVM1? = null
+    override fun layoutId(): Int = R.layout.activity_app3
 
     override fun initComponent() {
 
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragment, AppFragment3())
+            .add(R.id.top, FragTop())
+            .add(R.id.bottom, FragBottom())
             .commit()
     }
 
-    override fun observeVM() {}
+    override fun observeVM() {
+    }
 }

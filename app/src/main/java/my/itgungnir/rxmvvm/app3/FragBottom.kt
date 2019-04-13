@@ -1,25 +1,22 @@
-package my.itgungnir.rxmvvm.app1
+package my.itgungnir.rxmvvm.app3
 
 import android.arch.lifecycle.Observer
-import kotlinx.android.synthetic.main.activity_app1.*
+import kotlinx.android.synthetic.main.fragment_app3_bottom.*
 import my.itgungnir.rxmvvm.R
-import my.itgungnir.rxmvvm.core.mvvm.BaseActivity
-import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
-import org.jetbrains.anko.toast
+import my.itgungnir.rxmvvm.core.mvvm.BaseFragment
+import my.itgungnir.rxmvvm.core.mvvm.buildFragmentViewModel
+import org.jetbrains.anko.support.v4.toast
 
-/**
- * MVVM Activity
- */
-class AppActivity1 : BaseActivity() {
+class FragBottom : BaseFragment() {
 
     private val viewModel by lazy {
-        buildActivityViewModel(
-            activity = this,
-            viewModelClass = AppViewModel1::class.java
+        buildFragmentViewModel(
+            fragment = this,
+            viewModelClass = AppViewModel3::class.java
         )
     }
 
-    override fun layoutId(): Int = R.layout.activity_app1
+    override fun layoutId(): Int = R.layout.fragment_app3_bottom
 
     override fun initComponent() {
         button.setOnClickListener {
@@ -29,14 +26,14 @@ class AppActivity1 : BaseActivity() {
 
     override fun observeVM() {
 
-        viewModel.pick(AppState1::randomNum)
+        viewModel.pick(AppState3::randomNum)
             .observe(this, Observer { randomNum ->
                 randomNum?.a?.let {
                     number.text = it.toString()
                 }
             })
 
-        viewModel.pick(AppState1::error)
+        viewModel.pick(AppState3::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
                     toast(it)

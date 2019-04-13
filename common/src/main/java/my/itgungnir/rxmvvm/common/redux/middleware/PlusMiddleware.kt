@@ -6,17 +6,12 @@ import my.itgungnir.rxmvvm.common.redux.action.MultiTwo
 import my.itgungnir.rxmvvm.core.redux.Action
 import my.itgungnir.rxmvvm.core.redux.Middleware
 
-class PlusMiddleware : Middleware {
+class PlusMiddleware : Middleware<AppState> {
 
-    override fun apply(state: Any, action: Action): Action {
-
-        if (state !is AppState) {
-            return action
-        }
-
-        return when (action) {
-            is ChangeNum -> MultiTwo(action.newNum + 1)
-            else -> action
-        }
+    override fun apply(state: AppState, action: Action): Action = when (action) {
+        is ChangeNum ->
+            MultiTwo(action.newNum + 1)
+        else ->
+            action
     }
 }

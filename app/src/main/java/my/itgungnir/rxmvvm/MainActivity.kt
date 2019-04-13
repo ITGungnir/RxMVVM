@@ -11,8 +11,8 @@ import my.itgungnir.rxmvvm.app2.AppActivity2
 import my.itgungnir.rxmvvm.app3.AppActivity3
 import my.itgungnir.rxmvvm.app4.AppActivity4
 import my.itgungnir.rxmvvm.common.redux.AppState
+import my.itgungnir.rxmvvm.common.redux.MyRedux
 import my.itgungnir.rxmvvm.common.redux.action.ChangeNum
-import my.itgungnir.rxmvvm.core.redux.Redux
 
 class MainActivity : AppCompatActivity() {
 
@@ -23,7 +23,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         button1.setOnClickListener {
-            Redux.instance?.dispatch(ChangeNum(number), false)
+            MyRedux.instance.dispatch(ChangeNum(number), false)
         }
 
         button2.setOnClickListener {
@@ -47,8 +47,8 @@ class MainActivity : AppCompatActivity() {
 
     @SuppressLint("SetTextI18n")
     private fun observeVM() {
-        Redux.instance?.pick { (it as AppState).result }?.observe(this, Observer {
-            it?.let { num ->
+        MyRedux.instance.pick(AppState::result).observe(this, Observer {
+            it?.a?.let { num ->
                 if (number > 1) {
                     reduxText.text = "($number + 1) * 2 = $num"
                 }

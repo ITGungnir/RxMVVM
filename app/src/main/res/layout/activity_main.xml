@@ -56,21 +56,21 @@
         android:id="@+id/button3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MVVM Activity + Anko"
+        android:text="MVVM Activity + 多个Fragment 共享数据"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/button4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MVVM Activity + Fragment + Anko"
+        android:text="MVVM Activity + 多个Fragment 不共享数据"
         android:textAllCaps="false" />
 
     <Button
         android:id="@+id/button5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="MVVM Activity + 多个Fragment + shareVM"
+        android:text="MVVM Fragment 懒加载"
         android:textAllCaps="false" />
 
 </LinearLayout>

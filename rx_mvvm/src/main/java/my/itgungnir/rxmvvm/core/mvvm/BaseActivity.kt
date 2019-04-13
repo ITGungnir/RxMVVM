@@ -2,34 +2,19 @@ package my.itgungnir.rxmvvm.core.mvvm
 
 import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
-import org.jetbrains.anko.setContentView
-import org.jetbrains.anko.toast
 
-abstract class BaseActivity<T : BaseVM> : AppCompatActivity() {
-
-    protected val vm by lazy { obtainVM() }
+abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        when (val cv = contentView()) {
-            is Int -> setContentView(cv)
-            else -> (cv as BaseUI).setContentView(this)
-        }
-
-        vm?.let { lifecycle.addObserver(it) }
+        setContentView(layoutId())
 
         initComponent()
         observeVM()
     }
 
-    fun dispatchError(e: Throwable) {
-        e.message?.let { toast(it) }
-    }
-
-    abstract fun contentView(): Any
-
-    abstract fun obtainVM(): T?
+    abstract fun layoutId(): Int
 
     abstract fun initComponent()
 

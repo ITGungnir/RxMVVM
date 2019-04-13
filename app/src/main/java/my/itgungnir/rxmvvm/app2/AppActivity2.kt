@@ -1,30 +1,22 @@
 package my.itgungnir.rxmvvm.app2
 
-import android.arch.lifecycle.Observer
-import my.itgungnir.rxmvvm.core.ext.createVM
+import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.BaseActivity
-import my.itgungnir.rxmvvm.core.mvvm.BaseUI
-import org.jetbrains.anko.toast
 
 /**
- * MVVM + Activity + Anko
+ * MVVM Activity + 多个Fragment + shareVM
  */
-class AppActivity2 : BaseActivity<AppVM2>() {
+class AppActivity2 : BaseActivity() {
 
-    override fun contentView(): BaseUI = AppUI2()
+    override fun layoutId(): Int = R.layout.activity_app2
 
-    override fun obtainVM(): AppVM2 = createVM()
+    override fun initComponent() {
 
-    override fun initComponent() {}
-
-    fun generateRandomNumber() {
-        vm?.generateRandomNumber()
+        supportFragmentManager.beginTransaction()
+            .add(R.id.top, FragTop())
+            .add(R.id.bottom, FragBottom())
+            .commit()
     }
 
-    override fun observeVM() {
-        // 监听VM中状态的变化
-        vm?.randomNumberState?.observe(this, Observer {
-            it?.let { num -> toast(num.toString()) }
-        })
-    }
+    override fun observeVM() {}
 }

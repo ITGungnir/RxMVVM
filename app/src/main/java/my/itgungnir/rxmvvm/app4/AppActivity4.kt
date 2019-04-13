@@ -1,25 +1,46 @@
 package my.itgungnir.rxmvvm.app4
 
+import android.arch.lifecycle.Observer
+import android.support.v4.app.Fragment
+import android.support.v4.app.FragmentPagerAdapter
+import kotlinx.android.synthetic.main.activity_app4.*
 import my.itgungnir.rxmvvm.R
-import my.itgungnir.rxmvvm.core.ext.createVM
 import my.itgungnir.rxmvvm.core.mvvm.BaseActivity
+import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
 
-/**
- * MVVM Activity + 多个Fragment + shareVM
- */
-class AppActivity4 : BaseActivity<AppVM4>() {
+class AppActivity4 : BaseActivity() {
 
-    override fun contentView(): Int = R.layout.activity_app4
+    private val viewModel by lazy {
+        buildActivityViewModel(
+            activity = this,
+            viewModelClass = AppViewModel4::class.java
+        )
+    }
 
-    override fun obtainVM(): AppVM4 = createVM()
+    private val pageCount = 5
+
+    override fun layoutId(): Int = R.layout.activity_app4
 
     override fun initComponent() {
 
-        supportFragmentManager.beginTransaction()
-            .add(R.id.top, FragTop())
-            .add(R.id.bottom, FragBottom())
-            .commit()
+        viewPager.apply {
+            offscreenPageLimit = pageCount
+            adapter = object : FragmentPagerAdapter(supportFragmentManager) {
+                override fun getItem(position: Int): Fragment =
+                    FragChild.newInstance(position)
+
+                override fun getCount(): Int = pageCount
+            }
+        }
     }
 
-    override fun observeVM() {}
+    override fun observeVM() {
+
+        viewModel.pick(AppState4::newLog)
+            .observe(this, Observer { newLog ->
+                newLog?.a?.let {
+                    log.append("$it\n")
+                }
+            })
+    }
 }

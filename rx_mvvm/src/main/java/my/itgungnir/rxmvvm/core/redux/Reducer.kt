@@ -1,6 +1,6 @@
 package my.itgungnir.rxmvvm.core.redux
 
-interface Reducer {
+interface Reducer<T> {
 
-    fun reduce(state: Any, action: Action): Any
+    fun reduce(state: T, action: Action): T
 }

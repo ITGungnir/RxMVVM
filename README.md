@@ -10,103 +10,197 @@ implementation "com.github.ITGungnir:RxMVVM:$rxmvvm_version"
 ```
 
 ## 2、使用MVVM
-#### 1）BaseVM的使用
-`BaseVM`是`MVVM`中`VM`层的基类，是`V`层和`M`层的桥梁，提供方法给`V`层调用，方法中调用`M`层加载数据或其他操作；提供给`V`层一个监听器，监听数据变化。
+
+#### 1）State的使用
+`State`用于保存当前页面中的所有必要保存的状态，是一个`data class`，需要实现`my.itgungnir.rxmvvm.core.mvvm.State`接口。
 ```kotlin
-class AppVM1 : BaseVM() {
+data class AppState1(
+    val randomNum: Int = 0,
+    val error: Throwable? = null
+) : State
+```
 
-    val randomNumberState = MutableLiveData<Int>()
+#### 2）BaseViewModel的使用
+`BaseViewModel`是`MVVM`中`VM`层的基类，提供方法给`V`层调用，并提供给`V`层一个监听器，监听数据变化。
+```kotlin
+class AppViewModel1 : BaseViewModel<AppState1>(initialState = AppState1()) {
 
+    @SuppressLint("CheckResult")
     fun generateRandomNumber() {
-        this.randomNumberState.value = (1..100).random()
+        Single.just((1..100).random())
+            .subscribe({
+                setState {
+                    copy(
+                        randomNum = it,
+                        error = null
+                    )
+                }
+            }, {
+                setState {
+                    copy(
+                        error = Throwable(message = "生成随机数失败！")
+                    )
+                }
+            })
     }
 }
 ```
 
-#### 2）BaseActivity的使用
-`BaseActivity`是`V`层中`Activity`的基类，通过`createVM()`方法绑定`VM`，通过`vm?`调用`VM`层的方法或监听数据变化。
+#### 3）BaseActivity的使用
+`BaseActivity`是`V`层中`Activity`的基类，通过`buildActivityViewModel()`方法绑定`VM`，从而可以调用`VM`层的方法或监听数据变化。
 ```kotlin
-class AppActivity1 : BaseActivity<AppVM1>() {
+class AppActivity1 : BaseActivity() {
 
-    override fun contentView(): Int = R.layout.activity_app1
+    private val viewModel by lazy {
+        buildActivityViewModel(
+            activity = this,
+            viewModelClass = AppViewModel1::class.java
+        )
+    }
 
-    override fun obtainVM(): AppVM1 = createVM()
+    override fun layoutId(): Int = R.layout.activity_app1
 
     override fun initComponent() {
         button.setOnClickListener {
-            vm?.generateRandomNumber()
+            viewModel.generateRandomNumber()
         }
     }
 
     override fun observeVM() {
-        // 监听VM中状态的变化
-        vm?.randomNumberState?.observe(this, Observer {
-            it?.let { num -> toast(num.toString()) }
-        })
+
+        viewModel.pick(AppState1::randomNum)
+            .observe(this, Observer { randomNum ->
+                randomNum?.a?.let {
+                    number.text = it.toString()
+                }
+            })
+
+        viewModel.pick(AppState1::error)
+            .observe(this, Observer { error ->
+                error?.a?.message?.let {
+                    toast(it)
+                }
+            })
     }
 }
 ```
 
-#### 3）BaseFragment的使用
+#### 4）BaseFragment的使用
 `BaseFragment`是`Fragment`的基类，用法与`BaseActivity`大同小异。
 ```kotlin
-class AppFragment3 : BaseFragment<AppFragVM3>() {
+class FragBottom : BaseFragment() {
 
-    override fun contentView(): AppFragUI3 = AppFragUI3()
+    private val viewModel by lazy {
+        buildActivityViewModel(
+            activity = activity!!,
+            viewModelClass = AppViewModel2::class.java
+        )
+    }
 
-    override fun shouldBindLifecycle(): Boolean = true
-
-    override fun obtainVM(): AppFragVM3 = createVM()
+    override fun layoutId(): Int = R.layout.fragment_app2_bottom
 
     override fun initComponent() {}
 
-    fun generateRandomNumber() {
-        vm?.generateRandomNumber()
-    }
-
     override fun observeVM() {
-        // 监听VM中状态的变化
-        vm?.randomNumberState?.observe(this, Observer {
-            it?.let { num -> toast(num.toString()) }
-        })
+
+        viewModel.pick(AppState2::randomNum)
+            .observe(this, Observer { num ->
+                num?.a?.let {
+                    randomNum.text = it.toString()
+                }
+            })
+
+        viewModel.pick(AppState2::error)
+            .observe(this, Observer { error ->
+                error?.a?.message?.let {
+                    toast(it)
+                }
+            })
     }
 }
 ```
-BaseFragment的VM绑定方法有两种，即`createVM()`和`shareVM()`。前者只是使用自己的VM，而后者则可以与其他Fragment共享同一个VM。
+`BaseFragment`的`VM`绑定方法有两种，即`buildActivityViewModel()`和`buildFragmentViewModel()`。
+前者可以与其他`Fragment`共享同一个`VM`，而后者则只是使用自己的`VM`。
 ```kotlin
-override fun obtainVM(): AppVM4 = shareVM()
+private val innerViewModel by lazy {
+    buildFragmentViewModel(
+        fragment = this,
+        viewModelClass = ChildViewModel::class.java
+    )
+}
+private val outerViewModel by lazy {
+    buildActivityViewModel(
+        activity = activity!!,
+        viewModelClass = AppViewModel4::class.java
+    )
+}
 ```
 
-#### 4）BaseUI的使用
-`BaseUI`是基于`Kotlin-Anko`的一个`UI`基类，可以使用`Anko`的特性编写界面，摒弃`XML`界面。
+#### 4）LazyFragment的使用
+`LazyFragment`是一种支持懒加载的`Fragment`，即仅当当前`Fragment`被用户可见且之前没有被加载过时才加载数据。
+通过回调`onLazyLoad()`方法处理懒加载事件。
 ```kotlin
-class AppUI2 : BaseUI() {
+class FragChild : LazyFragment() {
 
-    private lateinit var uiOwner: AppActivity2
+    private val innerViewModel by lazy {
+        buildFragmentViewModel(
+            fragment = this,
+            viewModelClass = ChildViewModel::class.java
+        )
+    }
+
+    private val outerViewModel by lazy {
+        buildActivityViewModel(
+            activity = activity!!,
+            viewModelClass = AppViewModel4::class.java
+        )
+    }
+
+    private var flag = 0
+
+    companion object {
+        fun newInstance(flag: Int) = FragChild().apply { this.flag = flag }
+    }
+
+    override fun layoutId(): Int = R.layout.fragment_app4_child
 
     @SuppressLint("SetTextI18n")
-    override fun createView(ui: AnkoContext<LifecycleOwner>): View = with(ui) {
-        uiOwner = ui.owner as AppActivity2
-        verticalLayout {
-            button {
-                text = "点击弹出随机数Toast"
-            }.lparams(wrapContent, wrapContent).apply {
-                setOnClickListener {
-                    uiOwner.generateRandomNumber()
-                }
-            }
-        }.apply {
-            gravity = Gravity.CENTER
+    override fun initComponent() {
+        title.text = "App4 Fragment $flag"
+
+        button.setOnClickListener {
+            innerViewModel.generateRandomNumber()
         }
+    }
+
+    override fun onLazyLoad() {
+        outerViewModel.appendLog("Fragment$flag 懒加载成功！")
+    }
+
+    override fun observeVM() {
+
+        innerViewModel.pick(ChildState::randomNum)
+            .observe(this, Observer { randomNum ->
+                randomNum?.a?.let {
+                    number.text = it.toString()
+                }
+            })
+
+        innerViewModel.pick(ChildState::error)
+            .observe(this, Observer { error ->
+                error?.a?.message?.let {
+                    toast(it)
+                }
+            })
     }
 }
 ```
 
 ## 3、使用Redux
-使用Redux时需要自定义AppState、Action、Reducer和Middleware。
+使用`Redux`时需要自定义`Redux`子类、`AppState`、`Action`、`Reducer`和`Middleware`。
 
 #### 1）创建State
-State中可以存储应用中的状态。
+`State`中可以存储应用中的状态。
 ```kotlin
 data class AppState(
     val result: Int = 0
@@ -114,71 +208,76 @@ data class AppState(
 ```
 
 #### 2）创建Action
-每个Action表示一个动作，需要实现Action接口。
+每个`Action`表示一个动作，需要实现`Action`接口。
 ```kotlin
 data class GetResult(val result: Int) : Action
 ```
 
 #### 3）创建Reducer
-Reducer用来处理Action，将Action中的数据更新到State中。自定义Reducer需要实现Reducer接口。
+`Reducer`用来处理`Action`，将`Action`中的数据更新到`State`中。自定义`Reducer`需要实现`Reducer`接口。
 ```kotlin
-class MyReducer : Reducer {
+class MyReducer : Reducer<AppState> {
 
-    override fun reduce(state: Any, action: Action): Any {
-
-        if (state !is AppState) {
-            return AppState()
-        }
-
-        return when (action) {
-            is GetResult -> state.copy(result = action.result)
-            else -> state
-        }
+    override fun reduce(state: AppState, action: Action): AppState = when (action) {
+        is GetResult ->
+            state.copy(result = action.result)
+        else ->
+            state
     }
 }
 ```
 
 #### 4）创建Middleware
-Middleware用于将一个Action转换成另一个Action，需要实现Middleware接口。
+`Middleware`用于将一个`Action`转换成另一个`Action`，需要实现`Middleware`接口。
 ```kotlin
-class PlusMiddleware : Middleware {
+class PlusMiddleware : Middleware<AppState> {
 
-    override fun apply(state: Any, action: Action): Action {
+    override fun apply(state: AppState, action: Action): Action = when (action) {
+        is ChangeNum ->
+            MultiTwo(action.newNum + 1)
+        else ->
+            action
+    }
+}
+```
 
-        if (state !is AppState) {
-            return action
-        }
+#### 5）创建Redux子类
+`Redux`子类需要继承`BaseRedux`类，并配置好其中的初始化数据，包括`Reducer`、`Middleware`等。
+```kotlin
+class MyRedux(context: Application) : BaseRedux<AppState>(
+    context = context,
+    initialState = AppState(),
+    reducer = MyReducer(),
+    middlewareList = listOf(PlusMiddleware(), MultipleMiddleware())
+) {
 
-        return when (action) {
-            is ChangeNum -> MultiTwo(action.newNum + 1)
-            else -> action
+    companion object {
+
+        lateinit var instance: MyRedux
+
+        fun init(context: Application) {
+            instance = MyRedux(context)
         }
     }
 }
 ```
 
-#### 5）初始化Redux
-建议在Application类中初始化Redux，初始化时需要传入上下文、State类型、初始状态、Reducer对象和Middleware列表。
+#### 6）初始化Redux
+建议在`Application`类中初始化`Redux`，初始化时需要传入上下文。
 ```kotlin
-Redux.init(
-    this,
-    AppState::class.java,
-    AppState(),
-    MyReducer(),
-    listOf(PlusMiddleware(), MultipleMiddleware())
-)
+MyRedux.init(this)
 ```
 
 #### 6）使用Redux
-Redux的使用包括发送Action和监听State两个步骤。
+`Redux`的使用包括发送`Action`和监听`State`两个步骤。
 ```kotlin
 // 发送Action
-Redux.instance?.dispatch(ChangeNum(number), false)
+MyRedux.instance.dispatch(ChangeNum(number), false)
 ```
 ```kotlin
 // 监听State
-Redux.instance?.pick { (it as AppState).result }?.observe(this, Observer {
-    it?.let { num ->
+MyRedux.instance.pick(AppState::result).observe(this, Observer {
+    it?.a?.let { num ->
         if (number > 1) {
             reduxText.text = "($number + 1) * 2 = $num"
         }

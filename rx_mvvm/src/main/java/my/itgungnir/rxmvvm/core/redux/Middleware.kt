@@ -1,6 +1,6 @@
 package my.itgungnir.rxmvvm.core.redux
 
-interface Middleware {
+interface Middleware<T> {
 
-    fun apply(state: Any, action: Action): Action
+    fun apply(state: T, action: Action): Action
 }
