@@ -1,9 +1,8 @@
 package my.itgungnir.rxmvvm.core.mvvm
 
-import android.arch.lifecycle.ViewModelProviders
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentActivity
-import android.support.v7.app.AppCompatActivity
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentActivity
+import androidx.lifecycle.ViewModelProviders
 
 fun <VM : BaseViewModel<S>, S : State> buildActivityViewModel(
     activity: FragmentActivity,

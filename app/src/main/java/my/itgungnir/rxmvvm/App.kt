@@ -1,6 +1,6 @@
 package my.itgungnir.rxmvvm
 
-import android.support.multidex.MultiDexApplication
+import androidx.multidex.MultiDexApplication
 import com.squareup.leakcanary.LeakCanary
 import my.itgungnir.rxmvvm.common.redux.MyRedux
 

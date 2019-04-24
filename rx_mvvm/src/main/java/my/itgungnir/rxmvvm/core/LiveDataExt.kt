@@ -1,6 +1,6 @@
 package my.itgungnir.rxmvvm.core
 
-import android.arch.lifecycle.LiveData
+import androidx.lifecycle.LiveData
 
 fun <T, R> LiveData<T>.map(func: (T) -> (R)): LiveData<R> =
     LiveDataUtil.map(this, func)

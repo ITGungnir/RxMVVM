@@ -1,13 +1,13 @@
 package my.itgungnir.rxmvvm.app4
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_app4_child.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.LazyFragment
 import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
 import my.itgungnir.rxmvvm.core.mvvm.buildFragmentViewModel
-import org.jetbrains.anko.support.v4.toast
 
 class FragChild : LazyFragment() {
 
@@ -58,7 +58,7 @@ class FragChild : LazyFragment() {
         innerViewModel.pick(ChildState::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             })
     }

@@ -1,8 +1,8 @@
 package my.itgungnir.rxmvvm.app4
 
-import android.arch.lifecycle.Observer
-import android.support.v4.app.Fragment
-import android.support.v4.app.FragmentPagerAdapter
+import androidx.lifecycle.Observer
+import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentPagerAdapter
 import kotlinx.android.synthetic.main.activity_app4.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.BaseActivity

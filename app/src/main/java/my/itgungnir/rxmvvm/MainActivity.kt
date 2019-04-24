@@ -1,10 +1,10 @@
 package my.itgungnir.rxmvvm
 
 import android.annotation.SuppressLint
-import android.arch.lifecycle.Observer
 import android.content.Intent
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_main.*
 import my.itgungnir.rxmvvm.app1.AppActivity1
 import my.itgungnir.rxmvvm.app2.AppActivity2

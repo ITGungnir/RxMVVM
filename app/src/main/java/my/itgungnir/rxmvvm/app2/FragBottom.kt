@@ -1,11 +1,11 @@
 package my.itgungnir.rxmvvm.app2
 
-import android.arch.lifecycle.Observer
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_app2_bottom.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.BaseFragment
 import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
-import org.jetbrains.anko.support.v4.toast
 
 class FragBottom : BaseFragment() {
 
@@ -32,7 +32,7 @@ class FragBottom : BaseFragment() {
         viewModel.pick(AppState2::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             })
     }

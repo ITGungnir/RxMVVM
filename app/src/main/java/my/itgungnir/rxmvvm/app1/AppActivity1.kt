@@ -1,11 +1,11 @@
 package my.itgungnir.rxmvvm.app1
 
-import android.arch.lifecycle.Observer
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_app1.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.BaseActivity
 import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
-import org.jetbrains.anko.toast
 
 /**
  * MVVM Activity
@@ -39,7 +39,7 @@ class AppActivity1 : BaseActivity() {
         viewModel.pick(AppState1::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
                 }
             })
     }

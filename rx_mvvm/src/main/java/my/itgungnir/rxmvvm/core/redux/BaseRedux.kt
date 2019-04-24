@@ -1,7 +1,7 @@
 package my.itgungnir.rxmvvm.core.redux
 
 import android.app.Application
-import android.arch.lifecycle.MutableLiveData
+import androidx.lifecycle.MutableLiveData
 import my.itgungnir.rxmvvm.core.*
 import kotlin.reflect.KProperty1
 

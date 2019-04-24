@@ -1,7 +1,7 @@
 package my.itgungnir.rxmvvm.core.mvvm
 
 import android.os.Bundle
-import android.support.v7.app.AppCompatActivity
+import androidx.appcompat.app.AppCompatActivity
 
 abstract class BaseActivity : AppCompatActivity() {
 

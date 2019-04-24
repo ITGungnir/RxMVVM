@@ -1,11 +1,11 @@
 package my.itgungnir.rxmvvm.app3
 
-import android.arch.lifecycle.Observer
+import android.widget.Toast
+import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_app3_top.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.BaseFragment
 import my.itgungnir.rxmvvm.core.mvvm.buildFragmentViewModel
-import org.jetbrains.anko.support.v4.toast
 
 class FragTop : BaseFragment() {
 
@@ -36,7 +36,7 @@ class FragTop : BaseFragment() {
         viewModel.pick(AppState3::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             })
     }
