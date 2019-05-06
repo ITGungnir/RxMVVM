@@ -60,6 +60,8 @@ open class BaseRedux<T>(
     ) = currState.map { state -> Tuple4(prop1.get(state), prop2.get(state), prop3.get(state), prop4.get(state)) }
         .distinctUntilChanged()
 
+    fun currState() = currState.value!!
+
     private fun apply(action: Action, index: Int): Action {
         if (index >= middlewareList.size) {
             return action
