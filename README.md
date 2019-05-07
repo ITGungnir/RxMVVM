@@ -259,8 +259,12 @@ class MyRedux(context: Application) : BaseRedux<AppState>(
             instance = MyRedux(context)
         }
     }
+
+    override fun deserializeToCurrState(json: String): AppState =
+        Gson().fromJson(json, AppState::class.java)
 }
 ```
+**注意：** `BaseRedux`的子类需要重写`deserializeToCurrState`方法，这个方法用于提供Json字符串向全局状态的映射规则。
 
 #### 6）初始化Redux
 建议在`Application`类中初始化`Redux`，初始化时需要传入上下文。
@@ -268,7 +272,7 @@ class MyRedux(context: Application) : BaseRedux<AppState>(
 MyRedux.init(this)
 ```
 
-#### 6）使用Redux
+#### 7）使用Redux
 `Redux`的使用包括发送`Action`和监听`State`两个步骤。
 ```kotlin
 // 发送Action
@@ -284,4 +288,8 @@ MyRedux.instance.pick(AppState::result).observe(this, Observer {
         number++
     }
 })
+```
+除此之外，也可以通过`currState()`方法获取到当前全局状态对象：
+```kotlin
+println("------>>${MyRedux.instance.currState().result}")
 ```
