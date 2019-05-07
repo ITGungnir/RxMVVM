@@ -24,7 +24,7 @@ class MainActivity : AppCompatActivity() {
 
         button1.setOnClickListener {
             MyRedux.instance.dispatch(ChangeNum(number), true)
-            println("------>>${MyRedux.instance.currState()?.result}")
+            println("------>>${MyRedux.instance.currState().result}")
         }
 
         button2.setOnClickListener {

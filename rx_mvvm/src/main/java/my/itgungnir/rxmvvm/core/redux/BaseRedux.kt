@@ -16,13 +16,11 @@ abstract class BaseRedux<T>(
         ReduxPersister<T>(context)
     }
 
-    private val currState = MutableLiveData<T>().apply {
-        value = spUtil.deserialize() ?: initialState
-    }
+    private val currState = MutableLiveData<T>().apply { value = currState() }
 
     fun dispatch(action: Action, shouldSave: Boolean = false) {
-        when (val newState = reducer.reduce(currState.value!!, apply(action, 0))) {
-            currState.value -> Unit
+        when (val newState = reducer.reduce(currState(), apply(action, 0))) {
+            currState() -> Unit
             else -> {
                 currState.value = newState
                 if (shouldSave) {
@@ -36,7 +34,7 @@ abstract class BaseRedux<T>(
         if (index >= middlewareList.size) {
             return action
         }
-        return apply(middlewareList[index].apply(currState.value!!, action), index + 1)
+        return apply(middlewareList[index].apply(currState(), action), index + 1)
     }
 
     fun <A> pick(
@@ -65,7 +63,7 @@ abstract class BaseRedux<T>(
     ) = currState.map { state -> Tuple4(prop1.get(state), prop2.get(state), prop3.get(state), prop4.get(state)) }
         .distinctUntilChanged()
 
-    fun currState(): T? = deserializeToCurrState(spUtil.currState())
+    fun currState(): T = deserializeToCurrState(spUtil.currState()) ?: initialState
 
     /**
      * 将字符串解析成<T>对应的具体类型的对象
