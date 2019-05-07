@@ -5,21 +5,19 @@ import androidx.lifecycle.MutableLiveData
 import my.itgungnir.rxmvvm.core.*
 import kotlin.reflect.KProperty1
 
-open class BaseRedux<T>(
+abstract class BaseRedux<T>(
     private val context: Application,
     private val initialState: T,
     private val reducer: Reducer<T>,
     private val middlewareList: List<Middleware<T>>
 ) {
 
-    private val spKey = "rxmvvm_redux_key"
-
     private val spUtil: ReduxPersister<T> by lazy {
         ReduxPersister<T>(context)
     }
 
     private val currState = MutableLiveData<T>().apply {
-        value = spUtil.deserialize(spKey) ?: initialState
+        value = spUtil.deserialize() ?: initialState
     }
 
     fun dispatch(action: Action, shouldSave: Boolean = false) {
@@ -28,10 +26,17 @@ open class BaseRedux<T>(
             else -> {
                 currState.value = newState
                 if (shouldSave) {
-                    spUtil.serialize(spKey, newState)
+                    spUtil.serialize(newState)
                 }
             }
         }
+    }
+
+    private fun apply(action: Action, index: Int): Action {
+        if (index >= middlewareList.size) {
+            return action
+        }
+        return apply(middlewareList[index].apply(currState.value!!, action), index + 1)
     }
 
     fun <A> pick(
@@ -60,12 +65,10 @@ open class BaseRedux<T>(
     ) = currState.map { state -> Tuple4(prop1.get(state), prop2.get(state), prop3.get(state), prop4.get(state)) }
         .distinctUntilChanged()
 
-    fun currState() = currState.value!!
+    fun currState(): T? = deserializeToCurrState(spUtil.currState())
 
-    private fun apply(action: Action, index: Int): Action {
-        if (index >= middlewareList.size) {
-            return action
-        }
-        return apply(middlewareList[index].apply(currState.value!!, action), index + 1)
-    }
+    /**
+     * 将字符串解析成<T>对应的具体类型的对象
+     */
+    abstract fun deserializeToCurrState(json: String): T?
 }

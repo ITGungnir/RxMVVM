@@ -8,13 +8,18 @@ import com.google.gson.reflect.TypeToken
 
 class ReduxPersister<T>(context: Application) {
 
+    private val spKey = "rxmvvm_redux_key"
+
     private val sp: SharedPreferences by lazy {
         context.getSharedPreferences("rx_mvvm_sp", Context.MODE_PRIVATE)
     }
 
-    fun serialize(key: String, value: T) =
-        sp.edit().putString(key, Gson().toJson(value)).apply()
+    fun serialize(value: T) =
+        sp.edit().putString(spKey, Gson().toJson(value)).apply()
 
-    fun deserialize(key: String): T? =
-        Gson().fromJson(sp.getString(key, ""), object : TypeToken<T>() {}.type)
+    fun deserialize(): T? =
+        Gson().fromJson(sp.getString(spKey, ""), object : TypeToken<T>() {}.type)
+
+    fun currState(): String =
+        sp.getString(spKey, "")!!
 }

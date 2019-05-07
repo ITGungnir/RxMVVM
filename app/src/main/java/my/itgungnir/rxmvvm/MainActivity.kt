@@ -23,7 +23,8 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         button1.setOnClickListener {
-            MyRedux.instance.dispatch(ChangeNum(number), false)
+            MyRedux.instance.dispatch(ChangeNum(number), true)
+            println("------>>${MyRedux.instance.currState()?.result}")
         }
 
         button2.setOnClickListener {
