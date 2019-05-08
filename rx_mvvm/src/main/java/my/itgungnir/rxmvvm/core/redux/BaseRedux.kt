@@ -1,6 +1,7 @@
 package my.itgungnir.rxmvvm.core.redux
 
 import android.app.Application
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import my.itgungnir.rxmvvm.core.*
 import kotlin.reflect.KProperty1
@@ -22,7 +23,11 @@ abstract class BaseRedux<T>(
         when (val newState = reducer.reduce(currState(), apply(action, 0))) {
             currState() -> Unit
             else -> {
-                currState.value = newState
+                if (Looper.getMainLooper() == Looper.myLooper()) {
+                    currState.value = newState
+                } else {
+                    currState.postValue(newState)
+                }
                 if (shouldSave) {
                     spUtil.serialize(newState)
                 }
@@ -60,7 +65,14 @@ abstract class BaseRedux<T>(
         prop2: KProperty1<T, B>,
         prop3: KProperty1<T, C>,
         prop4: KProperty1<T, D>
-    ) = currState.map { state -> Tuple4(prop1.get(state), prop2.get(state), prop3.get(state), prop4.get(state)) }
+    ) = currState.map { state ->
+        Tuple4(
+            prop1.get(state),
+            prop2.get(state),
+            prop3.get(state),
+            prop4.get(state)
+        )
+    }
         .distinctUntilChanged()
 
     fun currState(): T = deserializeToCurrState(spUtil.currState()) ?: initialState

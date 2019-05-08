@@ -5,6 +5,9 @@ import android.content.Intent
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
+import io.reactivex.Single
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import my.itgungnir.rxmvvm.app1.AppActivity1
 import my.itgungnir.rxmvvm.app2.AppActivity2
@@ -23,7 +26,15 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         button1.setOnClickListener {
-            MyRedux.instance.dispatch(ChangeNum(number), true)
+            Single.just(ChangeNum(number))
+                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+                .observeOn(Schedulers.io())
+                .subscribe({
+                    MyRedux.instance.dispatch(it, true)
+                }, {
+                    println("------>>error: ${it.message}")
+                })
             println("------>>${MyRedux.instance.currState().result}")
         }
 

@@ -260,7 +260,7 @@ class MyRedux(context: Application) : BaseRedux<AppState>(
         }
     }
 
-    override fun deserializeToCurrState(json: String): AppState =
+    override fun deserializeToCurrState(json: String): AppState? =
         Gson().fromJson(json, AppState::class.java)
 }
 ```
@@ -288,6 +288,18 @@ MyRedux.instance.pick(AppState::result).observe(this, Observer {
         number++
     }
 })
+```
+发送Action的过程可以同步完成，也可以异步完成：
+```kotlin
+Single.just(ChangeNum(number))
+    .subscribeOn(Schedulers.io())
+//    .observeOn(AndroidSchedulers.mainThread())
+    .observeOn(Schedulers.io())
+    .subscribe({
+        MyRedux.instance.dispatch(it, true)
+    }, {
+        println("------>>error: ${it.message}")
+    })
 ```
 除此之外，也可以通过`currState()`方法获取到当前全局状态对象：
 ```kotlin

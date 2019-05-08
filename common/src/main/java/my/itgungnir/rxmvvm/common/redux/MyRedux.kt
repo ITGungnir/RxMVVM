@@ -22,6 +22,6 @@ class MyRedux(context: Application) : BaseRedux<AppState>(
         }
     }
 
-    override fun deserializeToCurrState(json: String): AppState =
+    override fun deserializeToCurrState(json: String): AppState? =
         Gson().fromJson(json, AppState::class.java)
 }

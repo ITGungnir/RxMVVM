@@ -17,5 +17,5 @@ class ReduxPersister<T>(context: Application) {
         sp.edit().putString(spKey, Gson().toJson(value)).apply()
 
     fun currState(): String =
-        sp.getString(spKey, "")!!
+        sp.getString(spKey, "") ?: ""
 }
