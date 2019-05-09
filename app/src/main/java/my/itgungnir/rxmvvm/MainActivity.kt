@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 //                .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe({
-                    MyRedux.instance.dispatch(it, true)
+                    MyRedux.instance.dispatch(it)
                 }, {
                     println("------>>error: ${it.message}")
                 })

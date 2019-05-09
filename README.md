@@ -232,9 +232,16 @@ class MyReducer : Reducer<AppState> {
 ```kotlin
 class PlusMiddleware : Middleware<AppState> {
 
-    override fun apply(state: AppState, action: Action): Action = when (action) {
-        is ChangeNum ->
-            MultiTwo(action.newNum + 1)
+    override fun apply(state: AppState, action: Action, dispatch: (Action) -> Unit): Action = when (action) {
+        is ChangeNum -> {
+            Observable.just(action.newNum + 1)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe {
+                    dispatch(MultiTwo(it))
+                }
+            NullAction
+        }
         else ->
             action
     }
@@ -276,7 +283,7 @@ MyRedux.init(this)
 `Redux`的使用包括发送`Action`和监听`State`两个步骤。
 ```kotlin
 // 发送Action
-MyRedux.instance.dispatch(ChangeNum(number), false)
+MyRedux.instance.dispatch(ChangeNum(number))
 ```
 ```kotlin
 // 监听State
@@ -296,7 +303,7 @@ Single.just(ChangeNum(number))
 //    .observeOn(AndroidSchedulers.mainThread())
     .observeOn(Schedulers.io())
     .subscribe({
-        MyRedux.instance.dispatch(it, true)
+        MyRedux.instance.dispatch(it)
     }, {
         println("------>>error: ${it.message}")
     })
