@@ -1,20 +1,18 @@
 package my.itgungnir.rxmvvm.app3
 
+import android.os.Bundle
+import androidx.appcompat.app.AppCompatActivity
 import my.itgungnir.rxmvvm.R
-import my.itgungnir.rxmvvm.core.mvvm.BaseActivity
 
-class AppActivity3 : BaseActivity() {
+class AppActivity3 : AppCompatActivity() {
 
-    override fun layoutId(): Int = R.layout.activity_app3
-
-    override fun initComponent() {
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_app3)
 
         supportFragmentManager.beginTransaction()
             .add(R.id.top, FragTop())
             .add(R.id.bottom, FragBottom())
             .commit()
-    }
-
-    override fun observeVM() {
     }
 }

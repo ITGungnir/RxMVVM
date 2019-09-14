@@ -27,6 +27,10 @@
 
         <activity android:name=".app4.AppActivity4" />
 
+        <activity android:name=".redux.NonPersistReduxActivity" />
+
+        <activity android:name=".redux.PersistReduxActivity" />
+
     </application>
 
 </manifest>

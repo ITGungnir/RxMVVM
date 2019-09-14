@@ -18,20 +18,18 @@
         android:textSize="20sp"
         android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/reduxText"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="(1 + 1) * 2 = 4"
-        android:textColor="@color/colorAccent"
-        android:textSize="30sp"
-        android:textStyle="bold" />
-
     <Button
         android:id="@+id/button1"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Change Number"
+        android:text="不做状态持久化的Redux"
+        android:textAllCaps="false" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="状态持久化的Redux"
         android:textAllCaps="false" />
 
     <TextView
@@ -46,28 +44,28 @@
         android:textStyle="bold" />
 
     <Button
-        android:id="@+id/button2"
+        android:id="@+id/button3"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="MVVM Activity"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/button3"
+        android:id="@+id/button4"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="MVVM Activity + 多个Fragment 共享数据"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/button4"
+        android:id="@+id/button5"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="MVVM Activity + 多个Fragment 不共享数据"
         android:textAllCaps="false" />
 
     <Button
-        android:id="@+id/button5"
+        android:id="@+id/button6"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="MVVM Fragment 懒加载"

@@ -2,6 +2,7 @@ package my.itgungnir.rxmvvm.common.redux
 
 import android.app.Application
 import com.google.gson.Gson
+import my.itgungnir.rxmvvm.common.redux.middleware.LoginMiddleware
 import my.itgungnir.rxmvvm.common.redux.middleware.MultipleMiddleware
 import my.itgungnir.rxmvvm.common.redux.middleware.PlusMiddleware
 import my.itgungnir.rxmvvm.core.redux.BaseRedux
@@ -9,8 +10,7 @@ import my.itgungnir.rxmvvm.core.redux.BaseRedux
 class MyRedux(context: Application) : BaseRedux<AppState>(
     context = context,
     initialState = AppState(),
-    reducer = MyReducer(),
-    middlewareList = listOf(PlusMiddleware(), MultipleMiddleware())
+    reducer = MyReducer()
 ) {
 
     companion object {
