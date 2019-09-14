@@ -94,7 +94,7 @@ class AppActivity1 : AppCompatActivity() {
 }
 ```
 
-#### 4）BaseFragment的使用
+#### 4）在Fragment中使用
 `Fragment`的使用与`Activity`的使用相似，它的`VM`绑定方法有两种，即`buildActivityViewModel()`和`buildFragmentViewModel()`。
 前者可以与其他`Fragment`共享同一个`VM`，而后者则只是使用自己的`VM`。
 ```kotlin
