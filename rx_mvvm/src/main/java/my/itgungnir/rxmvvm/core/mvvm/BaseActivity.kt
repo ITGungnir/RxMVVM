@@ -7,16 +7,12 @@ abstract class BaseActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-
         setContentView(layoutId())
 
-        initComponent()
-        observeVM()
+        createViews(savedInstanceState)
     }
 
     abstract fun layoutId(): Int
 
-    abstract fun initComponent()
-
-    abstract fun observeVM()
+    abstract fun createViews(savedInstanceState: Bundle?)
 }

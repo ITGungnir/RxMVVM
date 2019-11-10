@@ -8,18 +8,13 @@ import androidx.fragment.app.Fragment
 
 abstract class BaseFragment : Fragment() {
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(layoutId(), container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        initComponent()
-        observeVM()
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val view = inflater.inflate(layoutId(), container, false)
+        createViews(view, savedInstanceState)
+        return view
     }
 
     abstract fun layoutId(): Int
 
-    abstract fun initComponent()
-
-    abstract fun observeVM()
+    abstract fun createViews(view: View, savedInstanceState: Bundle?)
 }

@@ -1,52 +1,16 @@
 package my.itgungnir.rxmvvm.core.mvvm
 
-import android.os.Bundle
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import androidx.fragment.app.Fragment
+abstract class LazyFragment : BaseFragment() {
 
-abstract class LazyFragment : Fragment() {
+    private var initialized = false
 
-    private var isViewCreated: Boolean = false
-
-    private var isViewVisible: Boolean = false
-
-    private var isInitialized: Boolean = false
-
-    override fun setUserVisibleHint(isVisibleToUser: Boolean) {
-        super.setUserVisibleHint(isVisibleToUser)
-        isViewVisible = userVisibleHint
-        prepareLoad()
-    }
-
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
-        inflater.inflate(layoutId(), container, false)
-
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        isViewCreated = true
-        initComponent()
-        observeVM()
-    }
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-        prepareLoad()
-    }
-
-    private fun prepareLoad() {
-        if (isViewCreated && isViewVisible && !isInitialized) {
+    override fun onResume() {
+        super.onResume()
+        if (!initialized) {
             onLazyLoad()
-            isInitialized = true
+            initialized = true
         }
     }
 
-    abstract fun layoutId(): Int
-
-    abstract fun initComponent()
-
     abstract fun onLazyLoad()
-
-    abstract fun observeVM()
 }

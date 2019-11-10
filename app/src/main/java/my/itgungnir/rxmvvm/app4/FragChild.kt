@@ -1,9 +1,12 @@
 package my.itgungnir.rxmvvm.app4
 
 import android.annotation.SuppressLint
+import android.os.Bundle
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_app4_child.*
+import kotlinx.android.synthetic.main.fragment_app4_child.view.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.LazyFragment
 import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
@@ -34,19 +37,12 @@ class FragChild : LazyFragment() {
     override fun layoutId(): Int = R.layout.fragment_app4_child
 
     @SuppressLint("SetTextI18n")
-    override fun initComponent() {
-        title.text = "App4 Fragment $flag"
+    override fun createViews(view: View, savedInstanceState: Bundle?) {
+        view.title.text = "App4 Fragment $flag"
 
-        button.setOnClickListener {
+        view.button.setOnClickListener {
             innerViewModel.generateRandomNumber()
         }
-    }
-
-    override fun onLazyLoad() {
-        outerViewModel.appendLog("Fragment$flag 懒加载成功！")
-    }
-
-    override fun observeVM() {
 
         innerViewModel.pick(ChildState::randomNum)
             .observe(this, Observer { randomNum ->
@@ -61,5 +57,9 @@ class FragChild : LazyFragment() {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    override fun onLazyLoad() {
+        outerViewModel.appendLog("Fragment$flag 懒加载成功！")
     }
 }

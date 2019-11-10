@@ -1,6 +1,8 @@
 package my.itgungnir.rxmvvm.app2
 
-import kotlinx.android.synthetic.main.fragment_app2_top.*
+import android.os.Bundle
+import android.view.View
+import kotlinx.android.synthetic.main.fragment_app2_top.view.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.core.mvvm.BaseFragment
 import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
@@ -16,11 +18,9 @@ class FragTop : BaseFragment() {
 
     override fun layoutId(): Int = R.layout.fragment_app2_top
 
-    override fun initComponent() {
-        button.setOnClickListener {
+    override fun createViews(view: View, savedInstanceState: Bundle?) {
+        view.button.setOnClickListener {
             viewModel.generateRandomNumber()
         }
     }
-
-    override fun observeVM() {}
 }

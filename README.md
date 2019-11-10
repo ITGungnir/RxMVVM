@@ -62,13 +62,10 @@ class AppActivity1 : BaseActivity() {
 
     override fun layoutId(): Int = R.layout.activity_app1
 
-    override fun initComponent() {
+    override fun createViews(savedInstanceState: Bundle?) {
         button.setOnClickListener {
             viewModel.generateRandomNumber()
         }
-    }
-
-    override fun observeVM() {
 
         viewModel.pick(AppState1::randomNum)
             .observe(this, Observer { randomNum ->
@@ -76,11 +73,10 @@ class AppActivity1 : BaseActivity() {
                     number.text = it.toString()
                 }
             })
-
         viewModel.pick(AppState1::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(this, it, Toast.LENGTH_SHORT).show()
                 }
             })
     }
@@ -101,21 +97,17 @@ class FragBottom : BaseFragment() {
 
     override fun layoutId(): Int = R.layout.fragment_app2_bottom
 
-    override fun initComponent() {}
-
-    override fun observeVM() {
-
+    override fun createViews(view: View, savedInstanceState: Bundle?) {
         viewModel.pick(AppState2::randomNum)
             .observe(this, Observer { num ->
                 num?.a?.let {
                     randomNum.text = it.toString()
                 }
             })
-
         viewModel.pick(AppState2::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             })
     }
@@ -167,19 +159,12 @@ class FragChild : LazyFragment() {
     override fun layoutId(): Int = R.layout.fragment_app4_child
 
     @SuppressLint("SetTextI18n")
-    override fun initComponent() {
-        title.text = "App4 Fragment $flag"
+    override fun createViews(view: View, savedInstanceState: Bundle?) {
+        view.title.text = "App4 Fragment $flag"
 
-        button.setOnClickListener {
+        view.button.setOnClickListener {
             innerViewModel.generateRandomNumber()
         }
-    }
-
-    override fun onLazyLoad() {
-        outerViewModel.appendLog("Fragment$flag 懒加载成功！")
-    }
-
-    override fun observeVM() {
 
         innerViewModel.pick(ChildState::randomNum)
             .observe(this, Observer { randomNum ->
@@ -191,9 +176,13 @@ class FragChild : LazyFragment() {
         innerViewModel.pick(ChildState::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
-                    toast(it)
+                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
             })
+    }
+
+    override fun onLazyLoad() {
+        outerViewModel.appendLog("Fragment$flag 懒加载成功！")
     }
 }
 ```
@@ -302,12 +291,12 @@ MyRedux.instance.pick(AppState::result).observe(this, Observer {
 ```kotlin
 Single.just(ChangeNum(number))
     .subscribeOn(Schedulers.io())
-//    .observeOn(AndroidSchedulers.mainThread())
+    // .observeOn(AndroidSchedulers.mainThread())
     .observeOn(Schedulers.io())
     .subscribe({
         MyRedux.instance.dispatch(it)
     }, {
-        println("------>>error: ${it.message}")
+        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
     })
 ```
 除此之外，也可以通过`currState()`方法获取到当前全局状态对象：

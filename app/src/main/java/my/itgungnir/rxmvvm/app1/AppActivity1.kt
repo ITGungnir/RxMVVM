@@ -1,5 +1,6 @@
 package my.itgungnir.rxmvvm.app1
 
+import android.os.Bundle
 import android.widget.Toast
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.activity_app1.*
@@ -21,13 +22,10 @@ class AppActivity1 : BaseActivity() {
 
     override fun layoutId(): Int = R.layout.activity_app1
 
-    override fun initComponent() {
+    override fun createViews(savedInstanceState: Bundle?) {
         button.setOnClickListener {
             viewModel.generateRandomNumber()
         }
-    }
-
-    override fun observeVM() {
 
         viewModel.pick(AppState1::randomNum)
             .observe(this, Observer { randomNum ->
@@ -35,7 +33,6 @@ class AppActivity1 : BaseActivity() {
                     number.text = it.toString()
                 }
             })
-
         viewModel.pick(AppState1::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {

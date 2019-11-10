@@ -3,10 +3,10 @@ package my.itgungnir.rxmvvm
 import android.annotation.SuppressLint
 import android.content.Intent
 import android.os.Bundle
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.Observer
 import io.reactivex.Single
-import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.schedulers.Schedulers
 import kotlinx.android.synthetic.main.activity_main.*
 import my.itgungnir.rxmvvm.app1.AppActivity1
@@ -28,12 +28,12 @@ class MainActivity : AppCompatActivity() {
         button1.setOnClickListener {
             Single.just(ChangeNum(number))
                 .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
+                // .observeOn(AndroidSchedulers.mainThread())
                 .observeOn(Schedulers.io())
                 .subscribe({
                     MyRedux.instance.dispatch(it)
                 }, {
-                    println("------>>error: ${it.message}")
+                    Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
                 })
             println("------>>${MyRedux.instance.currState().result}")
         }
