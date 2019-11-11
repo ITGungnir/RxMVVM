@@ -4,7 +4,7 @@
 ![License](https://img.shields.io/badge/License-Apache2.0-blue.svg)
 ![](https://img.shields.io/badge/Email-itgungnir@163.com-ff69b4.svg)
 
-A basic framework that integrates MVVM and Redux.
+A basic framework that integrates both MVVM and Redux.
 
 ## 1、引入
 ```groovy
@@ -48,10 +48,11 @@ class AppViewModel1 : BaseViewModel<AppState1>(initialState = AppState1()) {
 }
 ```
 
-#### 3）BaseActivity的使用
-`BaseActivity`是`V`层中`Activity`的基类，通过`buildActivityViewModel()`方法绑定`VM`，从而可以调用`VM`层的方法或监听数据变化。
+#### 3）在Activity中使用
+新版本的`RxMvvm`中不再封装`BaseActivity`、`BaseFragment`和`LazyFragment`，因此只需要继承`AppCompatActivity`或`Fragment`即可。
+在`Activity`中通过`buildActivityViewModel()`方法绑定`VM`，从而可以调用`VM`层的方法或监听数据变化。
 ```kotlin
-class AppActivity1 : BaseActivity() {
+class AppActivity1 : AppCompatActivity() {
 
     private val viewModel by lazy {
         buildActivityViewModel(
@@ -60,12 +61,21 @@ class AppActivity1 : BaseActivity() {
         )
     }
 
-    override fun layoutId(): Int = R.layout.activity_app1
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_app1)
 
-    override fun createViews(savedInstanceState: Bundle?) {
+        initComponent()
+        observeVM()
+    }
+
+    private fun initComponent() {
         button.setOnClickListener {
             viewModel.generateRandomNumber()
         }
+    }
+
+    private fun observeVM() {
 
         viewModel.pick(AppState1::randomNum)
             .observe(this, Observer { randomNum ->
@@ -73,6 +83,7 @@ class AppActivity1 : BaseActivity() {
                     number.text = it.toString()
                 }
             })
+
         viewModel.pick(AppState1::error)
             .observe(this, Observer { error ->
                 error?.a?.message?.let {
@@ -83,37 +94,8 @@ class AppActivity1 : BaseActivity() {
 }
 ```
 
-#### 4）BaseFragment的使用
-`BaseFragment`是`Fragment`的基类，用法与`BaseActivity`大同小异。
-```kotlin
-class FragBottom : BaseFragment() {
-
-    private val viewModel by lazy {
-        buildActivityViewModel(
-            activity = activity!!,
-            viewModelClass = AppViewModel2::class.java
-        )
-    }
-
-    override fun layoutId(): Int = R.layout.fragment_app2_bottom
-
-    override fun createViews(view: View, savedInstanceState: Bundle?) {
-        viewModel.pick(AppState2::randomNum)
-            .observe(this, Observer { num ->
-                num?.a?.let {
-                    randomNum.text = it.toString()
-                }
-            })
-        viewModel.pick(AppState2::error)
-            .observe(this, Observer { error ->
-                error?.a?.message?.let {
-                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                }
-            })
-    }
-}
-```
-`BaseFragment`的`VM`绑定方法有两种，即`buildActivityViewModel()`和`buildFragmentViewModel()`。
+#### 4）在Fragment中使用
+`Fragment`的使用与`Activity`的使用相似，它的`VM`绑定方法有两种，即`buildActivityViewModel()`和`buildFragmentViewModel()`。
 前者可以与其他`Fragment`共享同一个`VM`，而后者则只是使用自己的`VM`。
 ```kotlin
 private val innerViewModel by lazy {
@@ -130,71 +112,52 @@ private val outerViewModel by lazy {
 }
 ```
 
-#### 4）LazyFragment的使用
-`LazyFragment`是一种支持懒加载的`Fragment`，即仅当当前`Fragment`被用户可见且之前没有被加载过时才加载数据。
-通过回调`onLazyLoad()`方法处理懒加载事件。
+#### 4）Fragment懒加载的使用
+新版本的`RxMvvm`不再提供`LazyFragment`的`API`，因为`Google`已经废弃了`setUserVisibleHint()`方法，并提供了新的`setMaxLifecycle()`方法，其使用方法分为以下两步。
+
+第一步，在创建`FragmentPagerAdapter`或`FragmentStatePagerAdapter`时，调用两个方法的构造函数，代码如下：
 ```kotlin
-class FragChild : LazyFragment() {
+adapter = object : FragmentPagerAdapter(supportFragmentManager, BEHAVIOR_RESUME_ONLY_CURRENT_FRAGMENT) {
+    override fun getItem(position: Int): Fragment = FragChild.newInstance(position)
+    override fun getCount(): Int = pageCount
+}
+```
 
-    private val innerViewModel by lazy {
-        buildFragmentViewModel(
-            fragment = this,
-            viewModelClass = ChildViewModel::class.java
-        )
-    }
+第二步，在子`Fragment`的`onResume()`方法中进行页面的初始化：
+```kotlin
+class FragChild : Fragment() {
 
-    private val outerViewModel by lazy {
-        buildActivityViewModel(
-            activity = activity!!,
-            viewModelClass = AppViewModel4::class.java
-        )
-    }
+    private var isInitialized = false
 
-    private var flag = 0
-
-    companion object {
-        fun newInstance(flag: Int) = FragChild().apply { this.flag = flag }
-    }
-
-    override fun layoutId(): Int = R.layout.fragment_app4_child
-
-    @SuppressLint("SetTextI18n")
-    override fun createViews(view: View, savedInstanceState: Bundle?) {
-        view.title.text = "App4 Fragment $flag"
-
-        view.button.setOnClickListener {
-            innerViewModel.generateRandomNumber()
+    override fun onResume() {
+        super.onResume()
+        if (!isInitialized) {
+            // perform lazy loading
+            isInitialized = true
         }
-
-        innerViewModel.pick(ChildState::randomNum)
-            .observe(this, Observer { randomNum ->
-                randomNum?.a?.let {
-                    number.text = it.toString()
-                }
-            })
-
-        innerViewModel.pick(ChildState::error)
-            .observe(this, Observer { error ->
-                error?.a?.message?.let {
-                    Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
-                }
-            })
-    }
-
-    override fun onLazyLoad() {
-        outerViewModel.appendLog("Fragment$flag 懒加载成功！")
     }
 }
 ```
 
 ## 3、使用Redux
+`Redux`是一种前端的全局状态管理框架，它不仅可以存储全局的状态信息，还可以在系统各个组件中监听全局的状态的变化。
+
+参考：
+[Redux入门一](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_one_basic_usages.html)、
+[Redux入门二](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_two_async_operations.html)、
+[Redux入门三](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_three_react-redux.html)
+
+本项目中的`Redux`部分旨在提供一个轻量级的全局事件总线功能。
+
 使用`Redux`时需要自定义`Redux`子类、`AppState`、`Action`、`Reducer`和`Middleware`。
 
 #### 1）创建State
-`State`中可以存储应用中的状态。
+`State`中可以存储应用中的全局状态，在变量前面加上`@DoPersist`注解，可以将这个变量的值持久化到`SharedPreferences`中，如果不加这个注解，则不会做持久化操作。
 ```kotlin
 data class AppState(
-    val result: Int = 0
+    val result: Int = 0,
+    val loginFail: Unit? = null,
+    @DoPersist val username: String = ""
 )
 ```
 
@@ -274,7 +237,7 @@ MyRedux.init(this)
 `Redux`的使用包括发送`Action`和监听`State`两个步骤。
 ```kotlin
 // 发送Action
-MyRedux.instance.dispatch(ChangeNum(number))
+MyRedux.instance.dispatch(ChangeNum(currNum), listOf(PlusMiddleware(), MultipleMiddleware()))
 ```
 ```kotlin
 // 监听State
@@ -291,12 +254,12 @@ MyRedux.instance.pick(AppState::result).observe(this, Observer {
 ```kotlin
 Single.just(ChangeNum(number))
     .subscribeOn(Schedulers.io())
-    // .observeOn(AndroidSchedulers.mainThread())
+//    .observeOn(AndroidSchedulers.mainThread())
     .observeOn(Schedulers.io())
     .subscribe({
         MyRedux.instance.dispatch(it)
     }, {
-        Toast.makeText(this, it.message, Toast.LENGTH_SHORT).show()
+        println("------>>error: ${it.message}")
     })
 ```
 除此之外，也可以通过`currState()`方法获取到当前全局状态对象：
