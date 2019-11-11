@@ -4,7 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MediatorLiveData
 import androidx.lifecycle.Transformations
 
-class LiveDataUtil<T : Any?> {
+class LiveDataUtil {
 
     companion object {
 

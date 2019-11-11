@@ -14,7 +14,7 @@ open class BaseViewModel<T : State>(initialState: T) : ViewModel() {
         state.value = reducer(state.value!!)
     }
 
-    fun getState() = state.value!!
+    fun getState(): T = state.value!!
 
     fun <A> pick(prop1: KProperty1<T, A>) = Transformations.map(state) {
         Tuple1(prop1.get(it))

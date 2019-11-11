@@ -28,4 +28,6 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // Project
     implementation project(':common')
+    // ReactiveX
+    implementation "com.jakewharton.rxbinding2:rxbinding:$rxbinding_version"
 }

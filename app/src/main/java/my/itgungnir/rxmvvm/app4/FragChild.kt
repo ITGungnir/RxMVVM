@@ -2,17 +2,23 @@ package my.itgungnir.rxmvvm.app4
 
 import android.annotation.SuppressLint
 import android.os.Bundle
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.widget.Toast
+import androidx.fragment.app.Fragment
 import androidx.lifecycle.Observer
 import kotlinx.android.synthetic.main.fragment_app4_child.*
 import kotlinx.android.synthetic.main.fragment_app4_child.view.*
 import my.itgungnir.rxmvvm.R
-import my.itgungnir.rxmvvm.core.mvvm.LazyFragment
 import my.itgungnir.rxmvvm.core.mvvm.buildActivityViewModel
 import my.itgungnir.rxmvvm.core.mvvm.buildFragmentViewModel
 
-class FragChild : LazyFragment() {
+class FragChild : Fragment() {
+
+    private var isInitialized = false
+
+    private var flag = 0
 
     private val innerViewModel by lazy {
         buildFragmentViewModel(
@@ -28,16 +34,26 @@ class FragChild : LazyFragment() {
         )
     }
 
-    private var flag = 0
-
     companion object {
         fun newInstance(flag: Int) = FragChild().apply { this.flag = flag }
     }
 
-    override fun layoutId(): Int = R.layout.fragment_app4_child
+    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View {
+        val view = inflater.inflate(R.layout.fragment_app4_child, container, false)
+        initViews(view)
+        return view
+    }
+
+    override fun onResume() {
+        super.onResume()
+        if (!isInitialized) {
+            onLazyLoad()
+            isInitialized = true
+        }
+    }
 
     @SuppressLint("SetTextI18n")
-    override fun createViews(view: View, savedInstanceState: Bundle?) {
+    private fun initViews(view: View) {
         view.title.text = "App4 Fragment $flag"
 
         view.button.setOnClickListener {
@@ -59,7 +75,7 @@ class FragChild : LazyFragment() {
             })
     }
 
-    override fun onLazyLoad() {
+    private fun onLazyLoad() {
         outerViewModel.appendLog("Fragment$flag 懒加载成功！")
     }
 }

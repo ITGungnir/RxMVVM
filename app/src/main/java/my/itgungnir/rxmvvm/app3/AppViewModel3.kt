@@ -19,7 +19,7 @@ class AppViewModel3 : BaseViewModel<AppState3>(initialState = AppState3()) {
             }, {
                 setState {
                     copy(
-                        error = Throwable(message = "生成随机数失败！")
+                        error = kotlin.Throwable(message = "生成随机数失败！")
                     )
                 }
             })
