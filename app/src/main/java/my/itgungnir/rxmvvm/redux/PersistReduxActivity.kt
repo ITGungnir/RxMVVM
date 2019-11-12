@@ -39,7 +39,7 @@ class PersistReduxActivity : AppCompatActivity() {
 
         RxView.clicks(logout)
             .subscribe {
-                MyRedux.instance.dispatch(Logout, listOf())
+                MyRedux.instance.dispatch(Logout)
             }
     }
 

@@ -22,7 +22,7 @@ abstract class BaseRedux<T : Any>(
 
     fun currState(): T = deserializeToCurrState(spUtil.currState()) ?: initialState
 
-    fun dispatch(action: Action, middlewareList: List<Middleware<T>>) {
+    fun dispatch(action: Action, middlewareList: List<Middleware<T>> = listOf()) {
         this.middlewareList = middlewareList
         when (val newState = reducer.reduce(currState(), apply(action, 0))) {
             null -> Unit

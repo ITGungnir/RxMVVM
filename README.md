@@ -242,13 +242,17 @@ MyRedux.instance.dispatch(ChangeNum(currNum), listOf(PlusMiddleware(), MultipleM
 ```kotlin
 // 监听State
 MyRedux.instance.pick(AppState::result).observe(this, Observer {
-    it?.a?.let { num ->
-        if (number > 1) {
-            reduxText.text = "($number + 1) * 2 = $num"
-        }
-        number++
+    if (currNum == 1) {
+        tvResult.text = "($currNum + 1) * 2 = 4"
+    } else {
+        tvResult.text = "($currNum + 1) * 2 = ${it.a}"
     }
+    currNum++
 })
+```
+如果本次`dispatch`的事件不需要中间件处理，则可以不传这个参数：
+```kotlin
+MyRedux.instance.dispatch(Logout)
 ```
 发送Action的过程可以同步完成，也可以异步完成：
 ```kotlin
