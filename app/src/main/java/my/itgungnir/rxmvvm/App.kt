@@ -12,7 +12,8 @@ class App : MultiDexApplication() {
         MyRedux.init(this)
 
         if (LeakCanary.isInAnalyzerProcess(this)) {
-            LeakCanary.install(this)
+            return
         }
+        LeakCanary.install(this)
     }
 }
