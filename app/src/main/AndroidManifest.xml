@@ -2,6 +2,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="my.itgungnir.rxmvvm">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <application
         android:name=".App"
         android:allowBackup="true"
@@ -26,6 +28,10 @@
         <activity android:name=".app3.AppActivity3" />
 
         <activity android:name=".app4.AppActivity4" />
+
+        <activity android:name=".app5.AppActivity5" />
+
+        <activity android:name=".app6.AppActivity6" />
 
         <activity android:name=".redux.NonPersistReduxActivity" />
 

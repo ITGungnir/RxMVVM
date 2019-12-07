@@ -8,6 +8,8 @@ import my.itgungnir.rxmvvm.app1.AppActivity1
 import my.itgungnir.rxmvvm.app2.AppActivity2
 import my.itgungnir.rxmvvm.app3.AppActivity3
 import my.itgungnir.rxmvvm.app4.AppActivity4
+import my.itgungnir.rxmvvm.app5.AppActivity5
+import my.itgungnir.rxmvvm.app6.AppActivity6
 import my.itgungnir.rxmvvm.redux.NonPersistReduxActivity
 import my.itgungnir.rxmvvm.redux.PersistReduxActivity
 
@@ -39,6 +41,14 @@ class MainActivity : AppCompatActivity() {
 
         button6.setOnClickListener {
             startActivity(Intent(this, AppActivity4::class.java))
+        }
+
+        button7.setOnClickListener {
+            startActivity(Intent(this, AppActivity5::class.java))
+        }
+
+        button8.setOnClickListener {
+            startActivity(Intent(this, AppActivity6::class.java))
         }
     }
 }
