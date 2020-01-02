@@ -112,7 +112,7 @@ private val outerViewModel by lazy {
 }
 ```
 
-#### 4）Fragment懒加载的使用
+#### 5）Fragment懒加载的使用
 新版本的`RxMvvm`不再提供`LazyFragment`的`API`，因为`Google`已经废弃了`setUserVisibleHint()`方法，并提供了新的`setMaxLifecycle()`方法，其使用方法分为以下两步。
 
 第一步，在创建`FragmentPagerAdapter`或`FragmentStatePagerAdapter`时，调用两个方法的构造函数，代码如下：
@@ -136,6 +136,50 @@ class FragChild : Fragment() {
             isInitialized = true
         }
     }
+}
+```
+
+#### 6）ViewModel传参
+想要通过`ViewModel`传参，需要通过`ViewModelProvider.Factory`创建`ViewModel`的实例。新版本的`RxMvvm`提供的`buildActivityViewModel()`和`buildFragmentViewModel()`方法中新加了`factory`参数，
+但需要先在具体的`ViewModel`类中创建工厂：
+```kotlin
+class AppViewModel7 constructor() : BaseViewModel<AppState7>(initialState = AppState7()) {
+
+    constructor(initialData: Int) : this() {
+        setState {
+            copy(
+                data = initialData
+            )
+        }
+    }
+
+    class Factory(private val initialData: Int) : ViewModelProvider.NewInstanceFactory() {
+        @Suppress("UNCHECKED_CAST")
+        override fun <T : ViewModel?> create(modelClass: Class<T>): T = AppViewModel7(initialData = initialData) as T
+    }
+
+    fun changeData() {
+        var newData: Int = (Math.random() * 1000 + 10).toInt()
+        while (newData == getState().data) {
+            newData = (Math.random() * 1000 + 10).toInt()
+        }
+        setState {
+            copy(
+                data = newData
+            )
+        }
+    }
+}
+```
+
+在`Activity`中创建`ViewModel`的代码如下：
+```kotlin
+private val viewModel by lazy {
+    buildActivityViewModel(
+        activity = this,
+        viewModelClass = AppViewModel7::class.java,
+        factory = AppViewModel7.Factory(9999)
+    )
 }
 ```
 

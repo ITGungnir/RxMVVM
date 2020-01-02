@@ -33,6 +33,8 @@
 
         <activity android:name=".app6.AppActivity6" />
 
+        <activity android:name=".app7.AppActivity7" />
+
         <activity android:name=".redux.NonPersistReduxActivity" />
 
         <activity android:name=".redux.PersistReduxActivity" />
