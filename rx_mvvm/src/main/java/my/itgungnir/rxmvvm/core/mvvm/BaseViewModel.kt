@@ -1,5 +1,6 @@
 package my.itgungnir.rxmvvm.core.mvvm
 
+import android.os.Looper
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.Transformations
 import androidx.lifecycle.ViewModel
@@ -11,7 +12,12 @@ open class BaseViewModel<T : State>(initialState: T) : ViewModel() {
     private val state = MutableLiveData<T>().apply { value = initialState }
 
     fun setState(reducer: T.() -> T) {
-        state.value = reducer(state.value!!)
+        reducer(state.value!!).apply {
+            when (Looper.getMainLooper() == Looper.myLooper()) {
+                true -> state.value = this
+                else -> state.postValue(this)
+            }
+        }
     }
 
     fun getState(): T = state.value!!

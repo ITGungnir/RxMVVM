@@ -315,6 +315,13 @@ Single.just(ChangeNum(number))
 println("------>>${MyRedux.instance.currState().result}")
 ```
 
+## Change Logs
+#### v1.6.4
+* ViewModel中支持从非主线程中推送数据
+
+#### v1.6.3
+* ViewModel支持传入参数
+
 ## License
 ```text
 Copyright 2019 ITGungnir
