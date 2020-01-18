@@ -37,6 +37,4 @@ dependencies {
     api "androidx.multidex:multidex:$dex_version"
     api "com.google.code.gson:gson:$gson_version"
     debugApi "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
-    debugApi "com.squareup.leakcanary:leakcanary-support-fragment:$leak_canary_version"
-    releaseApi "com.squareup.leakcanary:leakcanary-android-no-op:$leak_canary_version"
 }
