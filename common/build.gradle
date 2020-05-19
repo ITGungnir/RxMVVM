@@ -25,16 +25,17 @@ dependencies {
     // Support
     api "com.google.android.material:material:$material_version"
     api "androidx.recyclerview:recyclerview:$recyclerview_version"
+    api "androidx.swiperefreshlayout:swiperefreshlayout:$refresh_version"
     // ReactiveX
     api "io.reactivex.rxjava2:rxjava:$rxjava_version"
     api "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
     // Network
     api "com.squareup.okhttp3:okhttp:$okhttp_version"
     api "com.squareup.retrofit2:retrofit:$retrofit_version"
-    api "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     api "com.squareup.retrofit2:converter-gson:$retrofit_version"
+    api "com.squareup.retrofit2:adapter-rxjava2:$retrofit_version"
     // Tools
-    api "androidx.multidex:multidex:$dex_version"
     api "com.google.code.gson:gson:$gson_version"
+    api "androidx.multidex:multidex:$dex_version"
     debugApi "com.squareup.leakcanary:leakcanary-android:$leak_canary_version"
 }

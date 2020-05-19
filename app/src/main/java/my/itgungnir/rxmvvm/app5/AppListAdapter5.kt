@@ -11,7 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
  *
  * Created by ITGungnir on 2019-12-07
  */
-class AppListAdapter5(var dataList: List<String>) : RecyclerView.Adapter<AppListAdapter5.VH>() {
+class AppListAdapter5(private var dataList: List<String>) : RecyclerView.Adapter<AppListAdapter5.VH>() {
 
     override fun getItemCount(): Int = dataList.size
 

@@ -39,14 +39,14 @@ class FragBottom : Fragment() {
     private fun observeVM() {
 
         viewModel.pick(AppState3::randomNum)
-            .observe(this, Observer { randomNum ->
+            .observe(viewLifecycleOwner, Observer { randomNum ->
                 randomNum?.a?.let {
                     number.text = it.toString()
                 }
             })
 
         viewModel.pick(AppState3::error)
-            .observe(this, Observer { error ->
+            .observe(viewLifecycleOwner, Observer { error ->
                 error?.a?.message?.let {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }

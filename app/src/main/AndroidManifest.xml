@@ -39,6 +39,10 @@
 
         <activity android:name=".redux.PersistReduxActivity" />
 
+        <activity android:name=".redux.BackPressureReduxActivity" />
+
+        <activity android:name=".redux.AsyncReduxActivity" />
+
     </application>
 
 </manifest>

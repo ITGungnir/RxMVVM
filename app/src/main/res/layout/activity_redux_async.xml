@@ -8,20 +8,24 @@
     tools:ignore="HardcodedText">
 
     <TextView
-        android:id="@+id/number"
+        android:id="@+id/currentUserName"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="RandomNumber"
         android:textColor="@color/colorAccent"
-        android:textSize="40sp"
-        android:textStyle="bold" />
+        android:textSize="16sp" />
 
     <Button
-        android:id="@+id/button"
+        android:id="@+id/syncToast"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dp"
-        android:text="点我生成随机数"
-        tools:ignore="HardcodedText" />
+        android:layout_marginTop="15dp"
+        android:text="发送同步事件弹出Toast" />
+
+    <Button
+        android:id="@+id/asyncToast"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:text="发送异步事件弹出Toast" />
 
 </LinearLayout>

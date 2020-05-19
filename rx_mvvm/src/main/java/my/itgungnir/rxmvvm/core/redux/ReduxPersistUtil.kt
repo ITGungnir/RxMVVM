@@ -1,9 +1,8 @@
 package my.itgungnir.rxmvvm.core.redux
 
 import android.app.Application
-import android.content.Context
-import android.content.SharedPreferences
 import com.google.gson.Gson
+import com.tencent.mmkv.MMKV
 
 @Target(AnnotationTarget.FIELD)
 @Retention(AnnotationRetention.RUNTIME)
@@ -11,10 +10,11 @@ annotation class DoPersist
 
 class ReduxPersistUtil<T : Any>(context: Application) {
 
-    val spKey = "rxmvvm_redux_key"
+    private val spKey = "rxmvvm_redux_key"
 
-    val sp: SharedPreferences by lazy {
-        context.getSharedPreferences("rx_mvvm_sp", Context.MODE_PRIVATE)
+    private val mmkv: MMKV by lazy {
+        MMKV.initialize(context)
+        MMKV.mmkvWithID("InterProcessKV", MMKV.MULTI_PROCESS_MODE)
     }
 
     @Suppress("UNCHECKED_CAST")
@@ -27,9 +27,9 @@ class ReduxPersistUtil<T : Any>(context: Application) {
         }.fold(hashMapOf<String, Any?>()) { map, pair ->
             map.apply { put(pair.first, pair.second) }
         }.apply {
-            sp.edit().putString(spKey, Gson().toJson(this)).apply()
+            mmkv.encode(spKey, Gson().toJson(this))
         }
     }
 
-    fun currState(): String = sp.getString(spKey, "") ?: ""
+    fun currState(): String = mmkv.decodeString(spKey) ?: ""
 }

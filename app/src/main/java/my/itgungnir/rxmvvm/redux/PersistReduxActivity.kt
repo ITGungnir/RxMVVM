@@ -5,19 +5,24 @@ import android.os.Bundle
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
-import androidx.lifecycle.Observer
 import com.jakewharton.rxbinding2.view.RxView
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.Observable
+import io.reactivex.disposables.Disposable
 import kotlinx.android.synthetic.main.activity_redux_persist.*
 import my.itgungnir.rxmvvm.R
 import my.itgungnir.rxmvvm.common.redux.AppState
 import my.itgungnir.rxmvvm.common.redux.MyRedux
 import my.itgungnir.rxmvvm.common.redux.action.Login
 import my.itgungnir.rxmvvm.common.redux.action.Logout
+import my.itgungnir.rxmvvm.common.redux.action.Reset
 import my.itgungnir.rxmvvm.common.redux.middleware.LoginMiddleware
+import java.util.concurrent.TimeUnit
 
 class PersistReduxActivity : AppCompatActivity() {
+
+    private var disposable1: Disposable? = null
+    private var disposable2: Disposable? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -31,6 +36,7 @@ class PersistReduxActivity : AppCompatActivity() {
     private fun initComponents() {
 
         RxView.clicks(login)
+            .throttleFirst(1, TimeUnit.SECONDS)
             .subscribe {
                 val usernameStr = userNameInput.editableText.toString().trim()
                 val passwordStr = passwordInput.editableText.toString().trim()
@@ -38,6 +44,7 @@ class PersistReduxActivity : AppCompatActivity() {
             }
 
         RxView.clicks(logout)
+            .throttleFirst(1, TimeUnit.SECONDS)
             .subscribe {
                 MyRedux.instance.dispatch(Logout)
             }
@@ -57,7 +64,7 @@ class PersistReduxActivity : AppCompatActivity() {
             login.isEnabled = it
         }
 
-        MyRedux.instance.pick(AppState::username).observe(this, Observer {
+        disposable1 = MyRedux.instance.pick(AppState::username).subscribe {
             if (it.a.isBlank()) {
                 loginLayer.visibility = View.VISIBLE
                 userInfoLayer.visibility = View.GONE
@@ -66,12 +73,19 @@ class PersistReduxActivity : AppCompatActivity() {
                 userInfoLayer.visibility = View.VISIBLE
                 userName.text = it.a
             }
-        })
+        }
 
-        MyRedux.instance.pick(AppState::loginFail).observe(this, Observer {
+        disposable2 = MyRedux.instance.pick(AppState::loginFail).subscribe {
             it.a?.let {
                 Toast.makeText(this, "登录失败，请重试", Toast.LENGTH_SHORT).show()
             }
-        })
+        }
+    }
+
+    override fun onDestroy() {
+        MyRedux.instance.dispatch(Reset, listOf())
+        disposable1?.takeIf { !it.isDisposed }?.dispose()
+        disposable2?.takeIf { !it.isDisposed }?.dispose()
+        super.onDestroy()
     }
 }

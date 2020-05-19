@@ -21,7 +21,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="50dp"
-        android:text="点我弹出随机数Toast"
+        android:text="点我生成随机数"
         tools:ignore="HardcodedText" />
 
 </LinearLayout>

@@ -1,19 +1,20 @@
 ext {
     // Build
-    gradle_version = '3.5.3'
+    gradle_version = '3.6.3'
     target_sdk_version = 28
     min_sdk_version = 19
     version_code = 1
     version_name = '1.0'
     jdk_version = JavaVersion.VERSION_1_8
     // Kotlin
-    kotlin_version = '1.3.50'
+    kotlin_version = '1.3.72'
     // Support
     support_version = '1.1.0'
-    material_version = '1.0.0'
+    material_version = '1.1.0'
+    refresh_version = '1.0.0'
     recyclerview_version = '1.1.0'
     // Lifecycle
-    lifecycle_version = '2.1.0'
+    lifecycle_version = '2.2.0'
     // ReactiveX
     rxjava_version = '2.2.15'
     rxandroid_version = '2.1.1'
@@ -24,6 +25,7 @@ ext {
     // Tools
     jitpack_version = '2.1'
     gson_version = '2.8.5'
+    mmkv_version = '1.1.1'
     dex_version = '2.0.1'
     leak_canary_version = '2.1'
 }
@@ -31,6 +33,8 @@ ext {
 static def addRepos(RepositoryHandler handler) {
     handler.google()
     handler.jcenter()
+    handler.maven { url "https://maven.aliyun.com/repository/google" }
+    handler.maven { url "https://maven.aliyun.com/repository/jcenter" }
     handler.maven { url 'https://jitpack.io' }
 }
 

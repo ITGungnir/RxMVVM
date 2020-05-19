@@ -191,7 +191,7 @@ private val viewModel by lazy {
 [Redux入门二](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_two_async_operations.html)、
 [Redux入门三](http://www.ruanyifeng.com/blog/2016/09/redux_tutorial_part_three_react-redux.html)
 
-本项目中的`Redux`部分旨在提供一个轻量级的全局事件总线功能。
+本项目中的`Redux`部分旨在提供一个轻量级的全局状态机和事件总线功能。
 
 使用`Redux`时需要自定义`Redux`子类、`AppState`、`Action`、`Reducer`和`Middleware`。
 
@@ -201,6 +201,7 @@ private val viewModel by lazy {
 data class AppState(
     val result: Int = 0,
     val loginFail: Unit? = null,
+    val backPressureNum: Long = 0L,
     @DoPersist val username: String = ""
 )
 ```
@@ -252,8 +253,7 @@ class PlusMiddleware : Middleware<AppState> {
 class MyRedux(context: Application) : BaseRedux<AppState>(
     context = context,
     initialState = AppState(),
-    reducer = MyReducer(),
-    middlewareList = listOf(PlusMiddleware(), MultipleMiddleware())
+    reducer = MyReducer()
 ) {
 
     companion object {
@@ -285,14 +285,14 @@ MyRedux.instance.dispatch(ChangeNum(currNum), listOf(PlusMiddleware(), MultipleM
 ```
 ```kotlin
 // 监听State
-MyRedux.instance.pick(AppState::result).observe(this, Observer {
+disposable = MyRedux.instance.pick(AppState::result).subscribe {
     if (currNum == 1) {
-        tvResult.text = "($currNum + 1) * 2 = 4"
+        tvResult.text = "(1 + 1) * 2 = 4"
     } else {
         tvResult.text = "($currNum + 1) * 2 = ${it.a}"
     }
     currNum++
-})
+}
 ```
 如果本次`dispatch`的事件不需要中间件处理，则可以不传这个参数：
 ```kotlin
@@ -300,22 +300,35 @@ MyRedux.instance.dispatch(Logout)
 ```
 发送Action的过程可以同步完成，也可以异步完成：
 ```kotlin
-Single.just(ChangeNum(number))
+Observable.just(1)
     .subscribeOn(Schedulers.io())
-//    .observeOn(AndroidSchedulers.mainThread())
-    .observeOn(Schedulers.io())
-    .subscribe({
-        MyRedux.instance.dispatch(it)
-    }, {
-        println("------>>error: ${it.message}")
-    })
+    .subscribe {
+        MyRedux.instance.dispatch(ToastEvent, listOf())
+    }
 ```
-除此之外，也可以通过`currState()`方法获取到当前全局状态对象：
+除此之外，也可以通过`currState`对象获取到当前全局状态对象：
 ```kotlin
-println("------>>${MyRedux.instance.currState().result}")
+currentUserName.text = "当前用户名：${MyRedux.instance.currState.username}"
+```
+
+#### 8）注意内存泄漏
+**注意：在使用RxMVVM中的Redux功能时，请注意Disposable的取消订阅操作，否则会导致内存泄漏。**
+```kotlin
+private var disposable: Disposable? = null
+disposable = MyRedux.instance.pick(AppState::toastEvent).subscribe {
+    it.a?.let {
+        Toast.makeText(this, "消费ToastEvent事件", Toast.LENGTH_SHORT).show()
+    }
+}
+disposable?.takeIf { !it.isDisposed }?.dispose()
 ```
 
 ## Change Logs
+#### v1.6.5
+* Redux核心从LiveData切换到RxJava
+* Redux支持背压
+* Redux部分API更改
+
 #### v1.6.4
 * ViewModel中支持从非主线程中推送数据
 

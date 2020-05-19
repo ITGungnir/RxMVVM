@@ -61,14 +61,14 @@ class FragChild : Fragment() {
         }
 
         innerViewModel.pick(ChildState::randomNum)
-            .observe(this, Observer { randomNum ->
+            .observe(viewLifecycleOwner, Observer { randomNum ->
                 randomNum?.a?.let {
                     number.text = it.toString()
                 }
             })
 
         innerViewModel.pick(ChildState::error)
-            .observe(this, Observer { error ->
+            .observe(viewLifecycleOwner, Observer { error ->
                 error?.a?.message?.let {
                     Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
                 }
