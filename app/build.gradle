@@ -28,6 +28,8 @@ dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
     // Project
     implementation project(':common')
+    // JetPack
+    implementation "androidx.swiperefreshlayout:swiperefreshlayout:$refresh_layout_version"
     // ReactiveX
     implementation "com.jakewharton.rxbinding2:rxbinding:$rxbinding_version"
 }

@@ -1,6 +1,6 @@
 apply plugin: 'com.android.library'
-apply plugin: 'kotlin-android-extensions'
 apply plugin: 'kotlin-android'
+apply plugin: 'kotlin-android-extensions'
 apply plugin: 'com.github.dcendents.android-maven'
 
 group = 'com.github.ITGungnir'
@@ -22,12 +22,12 @@ android {
 }
 
 dependencies {
-    // AndroidX
-    implementation "androidx.appcompat:appcompat:$support_version"
-    implementation "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     // Kotlin
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
+    compileOnly "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // JetPack
+    compileOnly "androidx.appcompat:appcompat:$support_version"
+    compileOnly "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     // Tools
-    implementation "com.google.code.gson:gson:$gson_version"
+    compileOnly "com.google.code.gson:gson:$gson_version"
 }

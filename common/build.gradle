@@ -21,10 +21,12 @@ dependencies {
     // Project
     api project(':rx_mvvm')
     // Kotlin
-    api "org.jetbrains.kotlin:kotlin-stdlib-jdk7:$kotlin_version"
-    // Support
+    api "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlin_version"
+    // JetPack
+    api "androidx.appcompat:appcompat:$support_version"
     api "com.google.android.material:material:$material_version"
     api "androidx.recyclerview:recyclerview:$recyclerview_version"
+    api "androidx.lifecycle:lifecycle-extensions:$lifecycle_version"
     // ReactiveX
     api "io.reactivex.rxjava2:rxjava:$rxjava_version"
     api "io.reactivex.rxjava2:rxandroid:$rxandroid_version"
